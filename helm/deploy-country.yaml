@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+ name: hello-svc
+ namespace: drone
+spec:
+ selector:
+   role: app
+ ports:
+   - protocol: TCP
+     port: 80
+     targetPort: 8080
+     nodePort: 32001
+ type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: hello-deployment
+ namespace: drone
+ labels:
+   role: app
+spec:
+ replicas: 1
+ selector:
+   matchLabels:
+     role: app
+ template:
+   metadata:
+     labels:
+       role: app
+   spec:
+     containers:
+     - name: app
+       image: "727245885999.dkr.ecr.us-east-2.amazonaws.com/drone:1.0.3_drone"

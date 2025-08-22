@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apps-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: api.localdev.me
+    http:
+      paths:
+      - path: /countries(/?.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ (index .Values.applications.countries.versions "1.0.1").name }}
+            port:
+              number: {{ (index .Values.applications.countries.versions "1.0.1").service.port }}
+      - path: /airports(/?.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ (index .Values.applications.airports.versions "v1").name }}
+            port:
+              number: {{ (index .Values.applications.airports.versions "v1").service.port }}
+{{- end }}

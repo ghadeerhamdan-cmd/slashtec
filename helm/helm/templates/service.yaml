@@ -1,0 +1,22 @@
+{{- range $appName, $app := .Values.applications }}
+{{- range $version, $config := $app.versions }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $config.name }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    app: {{ $appName }}
+    version: {{ $version }}
+spec:
+  type: {{ $config.service.type }}
+  ports:
+  - port: {{ $config.service.port }}
+    targetPort: {{ $config.service.targetPort }}
+    protocol: TCP
+  selector:
+    app: {{ $appName }}
+    version: {{ $version }}
+{{- end }}
+{{- end }}

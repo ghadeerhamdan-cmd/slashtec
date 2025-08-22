@@ -1,0 +1,62 @@
+{{- range $appName, $app := .Values.applications }}
+{{- range $version, $config := $app.versions }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $config.name }}
+  namespace: {{ $.Values.global.namespace }}
+  labels:
+    app: {{ $appName }}
+    version: {{ $version }}
+spec:
+  {{- if not $.Values.global.autoscaling.enabled }}
+  replicas: {{ $.Values.global.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ $appName }}
+      version: {{ $version }}
+  template:
+    metadata:
+      labels:
+        app: {{ $appName }}
+        version: {{ $version }}
+      {{- with $.Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+      - name: {{ $config.name }}
+        image: "{{ $config.image.repository }}:{{ $config.image.tag }}"
+        imagePullPolicy: {{ $config.image.pullPolicy }}
+        ports:
+        - containerPort: {{ $config.container.port }}
+          protocol: TCP
+        {{- if $config.health }}
+        livenessProbe:
+          httpGet:
+            path: {{ $config.health.livenessPath }}
+            port: {{ $config.health.port }}
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: {{ $config.health.readinessPath }}
+            port: {{ $config.health.port }}
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        {{- end }}
+        resources:
+          {{- toYaml $config.resources | nindent 12 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,20 @@
+{{- if $.Values.global.autoscaling.enabled }}
+{{- range $appName, $app := .Values.applications }}
+{{- range $version, $config := $app.versions }}
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $config.name }}
+  namespace: {{ $.Values.global.namespace }}
+spec:
+  maxReplicas: {{ $.Values.global.autoscaling.maxReplicas }}
+  minReplicas: {{ $.Values.global.autoscaling.minReplicas }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $config.name }}
+  targetCPUUtilizationPercentage: {{ $.Values.global.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: preprod-loyalty-api-service
+  namespace: argocd
+spec:
+  syncPolicy:
+    automated: {}
+  destination:
+    namespace: preprod
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path:    helm/helm
+    repoURL: git@github.com:ghadeerhamdan-cmd/slashtec.git
+    targetRevision: main

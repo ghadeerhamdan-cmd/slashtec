@@ -1,0 +1,6 @@
+apiVersion: v2
+name: airports-countries-apps
+description: A Helm chart for deploying Airports and Countries microservices
+type: application
+version: 1.0.0
+appVersion: "1.0.1"

@@ -1,0 +1,84 @@
+applications:
+  airports:
+    versions:
+      "v1":
+        name: airports-app-v1
+        image:
+          repository: ghadeerslash/airports-app
+          tag: "1.0.1"
+          pullPolicy: IfNotPresent
+        service:
+          type: ClusterIP
+          port: 80
+          targetPort: 8080
+        container:
+          port: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        health:
+          livenessPath: "/health/live"
+          readinessPath: "/health/ready"
+          port: 8080
+        
+      "v2":
+        name: airports-app-v2
+        image:
+          repository: ghadeerslash/airports-app
+          tag: "1.1.0"
+          pullPolicy: IfNotPresent
+        service:
+          type: ClusterIP
+          port: 80
+          targetPort: 8080
+        container:
+          port: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        health:
+          livenessPath: "/health/live"
+          readinessPath: "/health/ready"
+          port: 8080
+
+  countries:
+    versions:
+      "1.0.1":
+        name: countries-app
+        image:
+          repository: ghadeerslash/countries-app
+          tag: "1.0.1"
+          pullPolicy: IfNotPresent
+        service:
+          type: ClusterIP
+          port: 80
+          targetPort: 8080
+        container:
+          port: 8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        health:
+          livenessPath: "/health/live"
+          readinessPath: "/health/ready"
+          port: 8080
+
+# Ingress configuration
+ingress:
+  enabled: true
+
+# Global settings
+global:
+  namespace: default
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
+podAnnotations: {}
+podSecurityContext: {}

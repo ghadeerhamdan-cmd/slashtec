@@ -1,0 +1,91 @@
+#Drone CI File for Amazon ECR Pushes
+#Test twice
+
+kind: pipeline
+type: kubernetes
+name: default
+
+steps:
+
+- name: build
+  image: openjdk:8-jre-alpine3.9
+  commands:
+    - "echo 'Building application'"
+    - "mkdir -p /tmp/test"
+    - "cp ./countries-assembly-1.0.1.jar /tmp/test/"
+    - "cp ./airports-assembly-1.0.1.jar /tmp/test/"
+
+- name: publish  
+  image: plugins/ecr
+  settings:
+    access_key: 
+      from_secret: aws_access_key
+    secret_key: 
+      from_secret: aws_secret_key
+    repo: 
+      from_secret: aws_ecr_repo
+    registry: 
+      from_secret: aws_ecr_registry
+    region:
+      from_secret: aws_region
+    tags:
+        - '1.0.3_drone'
+  
+# - name: deliver
+#   image: sinlead/drone-kubectl
+#   settings:
+#     kubernetes_server:
+#       from_secret: k8s_server
+#     kubernetes_cert:
+#       from_secret: k8s_cert
+#     kubernetes_token:
+#       from_secret: k8s_token
+#   commands:
+#     - kubectl apply -f deploy-country.yaml
+    
+#- name: uninstall
+#  image: pelotech/drone-helm3
+#  settings:
+#    mode: delete
+#    release: myapp-staging
+#  environment:
+#    KUBE_API_SERVER:
+#      from_secret: k8s_server
+#    KUBE_TOKEN:
+#      from_secret: k8s_token
+#    KUBE_CERTIFICATE:
+#      from_secret: k8s_cert 
+   
+#- name: deploy
+#  image: bitsbeats/drone-helm3
+#  settings:
+#    kube_api_server:
+#      from_secret: k8s_server
+#    kube_token:
+#      from_secret: k8s_token
+#    kube_certificate:
+#      from_secret: k8s_cert  
+#    chart: ./helm
+#    release: myapp-staging
+#    namespace: drone
+#    wait: true
+#    force: true
+
+- name: deploy
+  image: pelotech/drone-helm3
+  settings:
+    mode: upgrade
+    chart: ./helm
+    release: airports-countries
+    namespace: default
+    values: values.yaml
+    force_upgrade: true
+    atomic: true
+    wait: true
+  environment:
+    KUBE_API_SERVER:
+      from_secret: k8s_server
+    KUBE_TOKEN:
+      from_secret: k8s_token
+    KUBE_CERTIFICATE:
+      from_secret: k8s_cert
