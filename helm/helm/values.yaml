@@ -72,7 +72,7 @@ ingress:
 
 # Global settings
 global:
-  namespace: default
+  namespace: preprod
   replicaCount: 1
   autoscaling:
     enabled: false

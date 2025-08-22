@@ -18,8 +18,8 @@ def configName = "preprod"
 def clientId = "${applicationName}-${envName}"
 def latestTagValue = params.Tag
 def namespace = "preprod"
-def helmDir = "slashtec/${envName}/${applicationName}/helm"
-def slashtecDir = "ghadeerhamdan-cmd/slashtec/${envName}/${applicationName}"
+def helmDir = "helm/helm"
+def slashtecDir = "ghadeerhamdan-cmd/slashtec/"
 
 node {
   withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {

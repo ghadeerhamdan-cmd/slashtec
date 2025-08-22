@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: preprod-loyalty-api-service
+  name: preprod-airportcountries-service
   namespace: argocd
 spec:
   syncPolicy:
@@ -12,5 +12,5 @@ spec:
   project: default
   source:
     path:    helm/helm
-    repoURL: git@github.com:ghadeerhamdan-cmd/slashtec.git
+    repoURL: https://github.com/ghadeerhamdan-cmd/slashtec
     targetRevision: main
