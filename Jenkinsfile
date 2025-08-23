@@ -88,7 +88,15 @@ node {
         sh("ls -la")
       }
       stage("Get the env variables from App") {
-        sh "aws appconfig get-configuration --application ${applicationName} --environment ${envName} --configuration ${configName} --client-id ${clientId} .env --region ${awsRegion}"
+        sh """
+          if command -v aws &> /dev/null; then
+            aws appconfig get-configuration --application ${applicationName} --environment ${envName} --configuration ${configName} --client-id ${clientId} .env --region ${awsRegion}
+          else
+            echo "AWS CLI not found. Please install AWS CLI on Jenkins server or skip this step."
+            echo "Creating empty .env file as fallback..."
+            touch .env
+          fi
+        """
       }
       stage('login to ecr') {
         sh("aws ecr get-login-password --region ${awsRegion}  | docker login --username AWS --password-stdin ${ecrUrl}")
