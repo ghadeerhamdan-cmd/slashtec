@@ -21,7 +21,7 @@ def namespace = "preprod"
 def helmDir = "slashtec/${envName}/${applicationName}/helm"
 def slashtecDir = "slashtec/slashtec/${envName}/${applicationName}"
 
-def notifyBuild(String buildStatus = 'STARTED') {
+def notifyBuild(String buildStatus = 'STARTED', String branch = 'main') {
   buildStatus =  buildStatus ?: 'SUCCESS'
   
   String color = 'good'
@@ -46,7 +46,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
           },
           {
             "title": "Branch",
-            "value": "${branchName}",
+            "value": "${branch}",
             "short": true
           },
           {
@@ -76,7 +76,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
 
 node {
   try {
-    notifyBuild('STARTED')
+    notifyBuild('STARTED', branchName)
       stage('cleanup') {
         cleanWs()
       }
@@ -118,7 +118,7 @@ node {
       currentBuild.result = 'FAILURE'
       throw e
     } finally {
-      notifyBuild(currentBuild.result ?: 'SUCCESS')
+      notifyBuild(currentBuild.result ?: 'SUCCESS', branchName)
     }
 }
 
