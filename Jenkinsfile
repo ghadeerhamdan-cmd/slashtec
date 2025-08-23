@@ -6,12 +6,12 @@ def EnvName        = "preprod"
 def registryId     = "727245885999"
 def awsRegion      = "ap-south-1"
 def ecrUrl         = "727245885999.dkr.ecr.ap-south-1.amazonaws.com/ghadeerecr"
-def dockerfile     = "Dockerfile"
+def dockerfile     = "dockerfile/Dockerfile"
 def imageTag       = "${EnvName}-${BUILD_NUMBER}"
 def ARGOCD_URL     = "https://argocd-preprod.login.foodics.online"
 
 // AppConfig Params
-def applicationName = "solo-api"
+def applicationName = "airport-countries"
 def envName = "preprod"
 def configName = "preprod"
 // Fix: Use string concatenation, not arithmetic
@@ -102,7 +102,26 @@ node {
         sh("aws ecr get-login-password --region ${awsRegion}  | docker login --username AWS --password-stdin ${ecrUrl}")
       }
       stage('Build Docker Image') {
-        sh("docker build -t ${ecrUrl}/${serviceName}:${imageTag} -f ${dockerfile} .")
+        sh """
+          echo "=== Docker Build Debug Info ==="
+          echo "Service Name: ${serviceName}"
+          echo "ECR URL: ${ecrUrl}"
+          echo "Image Tag: ${imageTag}"
+          echo "Dockerfile: ${dockerfile}"
+          echo "Available JAR files in helm/:"
+          ls -la helm/*.jar || echo "No JAR files found"
+          
+          echo "Preparing Docker build context..."
+          cp helm/*.jar dockerfile/ || echo "Warning: No JAR files copied"
+          
+          echo "Files in dockerfile directory:"
+          ls -la dockerfile/
+          
+          echo "Building Docker image..."
+          docker build -t ${ecrUrl}/${serviceName}:${imageTag} -f ${dockerfile} dockerfile/
+          
+          echo "=== Build Complete ==="
+        """
       }
       stage('Push Docker Image To ECR') {
         sh("docker push ${ecrUrl}/${serviceName}:${imageTag}")
