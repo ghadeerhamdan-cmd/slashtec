@@ -11,6 +11,6 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path:    helm/helm
-    repoURL: https://github.com/ghadeerhamdan-cmd/slashtec
+    path: helm/helm
+    repoURL: https://github.com/ghadeerhamdan-cmd/slashtec.git
     targetRevision: main

@@ -1,25 +1,25 @@
 def branchName     = params.BranchName ?: "main"
 def gitUrl         = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
-def gitUrlCode     = "git@github.com:ghadeerhamdan-cmd/airportconnector.git"
-def serviceName    = "airportconnector"
+def gitUrlCode     = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
+def serviceName    = "slashtec-service"
 def EnvName        = "preprod"
 def registryId     = "727245885999"
 def awsRegion      = "ap-south-1"
-def ecrUrl         = "727245885999.dkr.ecr.ap-south-1.amazonaws.com"
+def ecrUrl         = "727245885999.dkr.ecr.ap-south-1.amazonaws.com/ghadeerecr"
 def dockerfile     = "Dockerfile"
 def imageTag       = "${EnvName}-${BUILD_NUMBER}"
-def ARGOCD_URL     = "https://127.0.0.1:8080/applications"
+def ARGOCD_URL     = "https://argocd-preprod.login.foodics.online"
 
 // AppConfig Params
-def applicationName = "airportconnector"
+def applicationName = "solo-api"
 def envName = "preprod"
 def configName = "preprod"
 // Fix: Use string concatenation, not arithmetic
 def clientId = "${applicationName}-${envName}"
 def latestTagValue = params.Tag
 def namespace = "preprod"
-def helmDir = "helm/helm"
-def slashtecDir = "ghadeerhamdan-cmd/slashtec/"
+def helmDir = "slashtec/${envName}/${applicationName}/helm"
+def slashtecDir = "slashtec/slashtec/${envName}/${applicationName}"
 
 node {
   withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
