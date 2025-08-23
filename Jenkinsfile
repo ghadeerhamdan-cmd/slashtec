@@ -21,6 +21,59 @@ def namespace = "preprod"
 def helmDir = "slashtec/${envName}/${applicationName}/helm"
 def slashtecDir = "slashtec/slashtec/${envName}/${applicationName}"
 
+def notifyBuild(String buildStatus = 'STARTED') {
+  buildStatus =  buildStatus ?: 'SUCCESS'
+  
+  String color = 'good'
+  String summary = "${buildStatus}: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+  
+  if (buildStatus == 'STARTED') {
+    color = 'warning'
+  } else if (buildStatus == 'FAILURE') {
+    color = 'danger'
+  }
+  
+  String slackMessage = """
+  {
+    "attachments": [
+      {
+        "color": "${color}",
+        "fields": [
+          {
+            "title": "Build Status",
+            "value": "${summary}",
+            "short": false
+          },
+          {
+            "title": "Branch",
+            "value": "${branchName}",
+            "short": true
+          },
+          {
+            "title": "Build URL",
+            "value": "${env.BUILD_URL}",
+            "short": false
+          }
+        ]
+      }
+    ]
+  }
+  """
+  
+  if (env.SLACK_WEBHOOK) {
+    try {
+      httpRequest(
+        url: env.SLACK_WEBHOOK,
+        httpMode: 'POST',
+        contentType: 'APPLICATION_JSON',
+        requestBody: slackMessage
+      )
+    } catch (Exception e) {
+      echo "Failed to send Slack notification: ${e.getMessage()}"
+    }
+  }
+}
+
 node {
   withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
     try {
@@ -62,6 +115,11 @@ node {
       stage ("Deploy preprod-solo-crons to ${EnvName} Environment") {
         build job: 'preprod-solo-crons', wait: true
       }
+    } catch (Exception e) {
+      currentBuild.result = 'FAILURE'
+      throw e
+    } finally {
+      notifyBuild(currentBuild.result ?: 'SUCCESS')
     }
   }
 }
