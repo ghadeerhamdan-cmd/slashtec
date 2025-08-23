@@ -82,8 +82,8 @@ node {
       }
       stage ("Get the app code") {
         checkout([$class: 'GitSCM', branches: [[name: "${branchName}"]] , extensions: [], userRemoteConfigs: [[ url: "${gitUrlCode}"]]])
-        sh "rm -rf ~/workspace/\"${JOB_NAME}\"/slashtec"
-        sh "mkdir ~/workspace/\"${JOB_NAME}\"/slashtec  ; cd slashtec ; git clone -b main ${gitUrl} "
+        sh "rm -rf ${WORKSPACE}/slashtec"
+        sh "mkdir -p ${WORKSPACE}/slashtec && cd ${WORKSPACE}/slashtec && git clone -b main ${gitUrl} ."
         sh("cp dockerfile/* . || echo 'No files in dockerfile directory'")
         sh("ls -la")
       }
