@@ -5,7 +5,7 @@ applications:
         name: airports-app-v1
         image:
           repository: ghadeerslash/airports-app
-          tag: "1.0.1"
+          tag: "1.0.1-fixed"
           pullPolicy: IfNotPresent
         service:
           type: ClusterIP
@@ -26,7 +26,7 @@ applications:
         name: airports-app-v2
         image:
           repository: ghadeerslash/airports-app
-          tag: "1.1.0"
+          tag: "1.1.0-fixed"
           pullPolicy: IfNotPresent
         service:
           type: ClusterIP
