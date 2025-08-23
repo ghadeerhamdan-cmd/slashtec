@@ -1,3 +1,6 @@
+{{- range $appName, $appConfig := .Values.applications }}
+{{- range $version, $config := $appConfig.versions }}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +19,5 @@ spec:
   selector:
     app: {{ $appName }}
     version: {{ $version }}
+{{- end }}
+{{- end }}
