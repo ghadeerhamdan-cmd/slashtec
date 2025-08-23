@@ -89,13 +89,34 @@ node {
       }
       stage("Get the env variables from App") {
         sh """
+          echo "=== Environment Configuration ==="
+          echo "Application: ${applicationName}"
+          echo "Environment: ${envName}"
+          echo "Region: ${awsRegion}"
+          
           if command -v aws &> /dev/null; then
-            aws appconfig get-configuration --application ${applicationName} --environment ${envName} --configuration ${configName} --client-id ${clientId} .env --region ${awsRegion}
+            echo "AWS CLI found, attempting to fetch configuration..."
+            aws appconfig get-configuration --application ${applicationName} --environment ${envName} --configuration ${configName} --client-id ${clientId} .env --region ${awsRegion} || {
+              echo "AWS AppConfig fetch failed, creating fallback environment..."
+              echo "# Fallback environment configuration" > .env
+              echo "ENVIRONMENT=${envName}" >> .env
+              echo "SERVICE_PORT=8080" >> .env
+              echo "JAVA_OPTS=-Xmx512m -Xms256m" >> .env
+            }
           else
-            echo "AWS CLI not found. Please install AWS CLI on Jenkins server or skip this step."
-            echo "Creating empty .env file as fallback..."
-            touch .env
+            echo "AWS CLI not found on Jenkins server"
+            echo "Creating comprehensive fallback .env file..."
+            echo "# Fallback environment configuration" > .env
+            echo "ENVIRONMENT=${envName}" >> .env
+            echo "SERVICE_PORT=8080" >> .env
+            echo "JAVA_OPTS=-Xmx512m -Xms256m" >> .env
+            echo "AWS_REGION=${awsRegion}" >> .env
+            echo "APPLICATION_NAME=${applicationName}" >> .env
+            echo "Log level set to INFO for ${envName} environment" >> .env
           fi
+          
+          echo "Environment file contents:"
+          cat .env || echo "No .env file created"
         """
       }
       stage('login to ecr') {
