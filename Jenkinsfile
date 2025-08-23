@@ -60,24 +60,23 @@ def notifyBuild(String buildStatus = 'STARTED') {
   }
   """
   
-  if (env.SLACK_WEBHOOK) {
-    try {
+  try {
+    withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
       httpRequest(
         url: env.SLACK_WEBHOOK,
         httpMode: 'POST',
         contentType: 'APPLICATION_JSON',
         requestBody: slackMessage
       )
-    } catch (Exception e) {
-      echo "Failed to send Slack notification: ${e.getMessage()}"
     }
+  } catch (Exception e) {
+    echo "Slack notification skipped: ${e.getMessage()}"
   }
 }
 
 node {
-  withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
-    try {
-      notifyBuild('STARTED')
+  try {
+    notifyBuild('STARTED')
       stage('cleanup') {
         cleanWs()
       }
@@ -121,5 +120,5 @@ node {
     } finally {
       notifyBuild(currentBuild.result ?: 'SUCCESS')
     }
-  }
 }
+
