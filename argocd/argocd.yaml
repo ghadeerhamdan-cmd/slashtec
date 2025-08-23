@@ -7,7 +7,7 @@ spec:
   syncPolicy:
     automated: {}
   destination:
-    namespace: preprod
+    namespace: default
     server: https://kubernetes.default.svc
   project: default
   source:
