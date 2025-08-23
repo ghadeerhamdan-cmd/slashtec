@@ -18,8 +18,8 @@ def configName = "preprod"
 def clientId = "${applicationName}-${envName}"
 def latestTagValue = params.Tag
 def namespace = "preprod"
-def helmDir = "slashtec/${envName}/${applicationName}/helm"
-def slashtecDir = "slashtec/slashtec/${envName}/${applicationName}"
+def helmDir = "helm/helm"
+def slashtecDir = "helm"
 
 def notifyBuild(String buildStatus = 'STARTED', String branch = 'main') {
   buildStatus =  buildStatus ?: 'SUCCESS'
@@ -84,9 +84,8 @@ node {
         checkout([$class: 'GitSCM', branches: [[name: "${branchName}"]] , extensions: [], userRemoteConfigs: [[ url: "${gitUrlCode}"]]])
         sh "rm -rf ~/workspace/\"${JOB_NAME}\"/slashtec"
         sh "mkdir ~/workspace/\"${JOB_NAME}\"/slashtec  ; cd slashtec ; git clone -b main ${gitUrl} "
-        sh("cp ${slashtecDir}/docker/Dockerfile ${dockerfile}")
-        sh("cp -r  ${slashtecDir}/docker/* .")
-        sh("cp -r  ${slashtecDir}/files/* .")
+        sh("cp dockerfile/* . || echo 'No files in dockerfile directory'")
+        sh("ls -la")
       }
       stage("Get the env variables from App") {
         sh "aws appconfig get-configuration --application ${applicationName} --environment ${envName} --configuration ${configName} --client-id ${clientId} .env --region ${awsRegion}"
