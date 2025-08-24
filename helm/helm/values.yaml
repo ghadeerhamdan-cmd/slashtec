@@ -80,3 +80,8 @@ podSecurityContext: {}
 deployment:
   image:
     tag: preprod-59
+values:
+  airports:
+    versions:
+      image:
+        tag: preprod-60
