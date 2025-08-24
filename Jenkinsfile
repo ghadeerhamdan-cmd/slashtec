@@ -98,8 +98,8 @@ node {
           cat .env || echo "No .env file created"
         """
       }
-          stage('login to ECR') {
-          sh "aws ecr get-login-password --region ${awsRegion} | docker login --username AWS --password-stdin ${ecrUrl}"
+      stage('login to ECR') {
+          sh "aws ecr get-login-password --region ${awsRegion} | docker login --username AWS --password-stdin ${registryId}.dkr.ecr.${awsRegion}.amazonaws.com"
       }
 
       stage('Build Docker Image') {
@@ -110,11 +110,11 @@ node {
       }
 
       stage('Push Docker Image To ECR') {
-          sh "docker push ${ecrUrl}/${serviceName}:${imageTag}"
+          sh "docker push 727245885999.dkr.ecr.ap-south-1.amazonaws.com/ghadeerecr:${imageTag}"
       }
 
       stage('Clean Docker Images') {
-          sh "docker rmi -f ${ecrUrl}/${serviceName}:${imageTag} || true"
+          sh "docker rmi -f 727245885999.dkr.ecr.ap-south-1.amazonaws.com/ghadeerecr:${imageTag} || true"
 }
 
       
