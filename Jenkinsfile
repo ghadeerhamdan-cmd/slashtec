@@ -98,54 +98,37 @@ node {
           cat .env || echo "No .env file created"
         """
       }
-      stage('login to ECR') {
-    steps {
-        script {
-            sh """
-                echo "Logging into ECR: ${ecrUrl}"
-                aws ecr get-login-password --region ${awsRegion} | \
-                docker login --username AWS --password-stdin ${ecrUrl}
-            """
-        }
-    }
-}
-
-stage('Build Docker Image') {
-    steps {
-        script {
-            sh """
-                echo "Building Docker image: ${serviceName}:${imageTag}"
-                cp helm/*.jar dockerfile/ || echo "Warning: No JAR files copied"
-                docker build -t ${ecrUrl}/${serviceName}:${imageTag} -f ${dockerfile} dockerfile/
-                echo "Docker build complete"
-            """
-        }
-    }
-}
-
-stage('Push Docker Image To ECR') {
-    steps {
-        script {
-            sh """
-                echo "Pushing Docker image to ECR: ${ecrUrl}/${serviceName}:${imageTag}"
-                docker push ${ecrUrl}/${serviceName}:${imageTag}
-                echo "Docker push complete"
-            """
-        }
-    }
-}
-
-stage('Clean Docker Images') {
-    steps {
-        script {
-            sh """
-                echo "Cleaning up local Docker image..."
-                docker rmi -f ${ecrUrl}/${serviceName}:${imageTag} || true
-            """
-        }
-    }
-}
-
+      stage('login to ecr') {
+        sh("aws ecr get-login-password --region ${awsRegion}  | docker login --username AWS --password-stdin ${ecrUrl}")
+      }
+      stage('Build Docker Image') {
+        sh """
+          echo "=== Docker Build Debug Info ==="
+          echo "Service Name: ${serviceName}"
+          echo "ECR URL: ${ecrUrl}"
+          echo "Image Tag: ${imageTag}"
+          echo "Dockerfile: ${dockerfile}"
+          echo "Available JAR files in helm/:"
+          ls -la helm/*.jar || echo "No JAR files found"
+          
+          echo "Preparing Docker build context..."
+          cp helm/*.jar dockerfile/ || echo "Warning: No JAR files copied"
+          
+          echo "Files in dockerfile directory:"
+          ls -la dockerfile/
+          
+          echo "Building Docker image..."
+          docker build -t ${ecrUrl}/${serviceName}:${imageTag} -f ${dockerfile} dockerfile/
+          
+          echo "=== Build Complete ==="
+        """
+      }
+      stage('Push Docker Image To ECR') {
+        sh("docker push ${ecrUrl}/${serviceName}:${imageTag}")
+      }
+      stage('Clean docker images') {
+        sh("docker rmi -f ${ecrUrl}/${serviceName}:${imageTag} || :")
+      }
       stage ("Deploy ${serviceName} to ${EnvName} Environment") {
         sh ("cd slashtec/${helmDir}; pathEnv=\".deployment.image.tag\" valueEnv=\"${imageTag}\" yq 'eval(strenv(pathEnv)) = strenv(valueEnv)' -i values.yaml ; cat values.yaml")
         sh ("cd slashtec/${helmDir}; git pull ; git add values.yaml; git commit -m 'update image tag' ;git push ${gitUrl}")
