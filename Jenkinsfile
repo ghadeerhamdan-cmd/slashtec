@@ -137,9 +137,7 @@ node {
       stage ("Deploy airportcountries to ${EnvName} Environment") {
         build job: 'airportcountries', wait: true
       }
-      stage ("Deploy airportcountries to ${EnvName} Environment") {
-        build job: 'airportcountries', wait: true
-      }
+  
     } catch (Exception e) {
       currentBuild.result = 'FAILURE'
       throw e
