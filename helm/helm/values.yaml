@@ -41,6 +41,8 @@ applications:
           livenessPath: "/health/live"
           readinessPath: "/health/ready"
           port: 8080
+      image:
+        tag: preprod-64
   countries:
     versions:
       "1.0.1":
