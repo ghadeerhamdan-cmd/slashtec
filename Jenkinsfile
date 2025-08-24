@@ -21,59 +21,6 @@ def namespace = "preprod"
 def helmDir = "helm/helm"
 def slashtecDir = "helm"
 
-def notifyBuild(String buildStatus = 'STARTED', String branch = 'main') {
-  buildStatus =  buildStatus ?: 'SUCCESS'
-  
-  String color = 'good'
-  String summary = "${buildStatus}: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-  
-  if (buildStatus == 'STARTED') {
-    color = 'warning'
-  } else if (buildStatus == 'FAILURE') {
-    color = 'danger'
-  }
-  
-  String slackMessage = """
-  {
-    "attachments": [
-      {
-        "color": "${color}",
-        "fields": [
-          {
-            "title": "Build Status",
-            "value": "${summary}",
-            "short": false
-          },
-          {
-            "title": "Branch",
-            "value": "${branch}",
-            "short": true
-          },
-          {
-            "title": "Build URL",
-            "value": "${env.BUILD_URL}",
-            "short": false
-          }
-        ]
-      }
-    ]
-  }
-  """
-  
-  try {
-    withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
-      httpRequest(
-        url: env.SLACK_WEBHOOK,
-        httpMode: 'POST',
-        contentType: 'APPLICATION_JSON',
-        requestBody: slackMessage
-      )
-    }
-  } catch (Exception e) {
-    echo "Slack notification skipped: ${e.getMessage()}"
-  }
-}
-
 node {
   try {
     notifyBuild('STARTED', branchName)
