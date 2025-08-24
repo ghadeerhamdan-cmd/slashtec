@@ -77,9 +77,4 @@ global:
     targetCPUUtilizationPercentage: 80
 podAnnotations: {}
 podSecurityContext: {}
-values:
-  application:
-    airports:
-      versions:
-        image:
-          tag: preprod-62
+
