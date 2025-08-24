@@ -42,7 +42,7 @@ applications:
           readinessPath: "/health/ready"
           port: 8080
       image:
-        tag: preprod-64
+        tag: preprod-65
   countries:
     versions:
       "1.0.1":
