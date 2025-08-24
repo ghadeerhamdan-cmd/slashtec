@@ -32,6 +32,12 @@ def notifyBuild(String buildStatus, String branchName) {
   def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
     <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>
     <p>Branch: ${branchName}</p>"""
+  def color
+  def colorCode
+
+  // Define color variables
+  color = 'YELLOW'
+  colorCode = '#FFFF00'
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
