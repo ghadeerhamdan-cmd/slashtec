@@ -1,7 +1,7 @@
 def branchName     = params.BranchName ?: "main"
 def gitUrl         = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
 def gitUrlCode     = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
-def serviceName    = "slashtec-service"
+def serviceName    = "ghadeerecr"
 def EnvName        = "preprod"
 def registryId     = "727245885999"
 def awsRegion      = "ap-south-1"
