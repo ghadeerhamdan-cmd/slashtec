@@ -1,6 +1,6 @@
 def branchName     = params.BranchName ?: "main"
-def gitUrl         = "https://github.com/ghadeerhamdan-cmd/slashtec.git"
-def gitUrlCode     = "https://github.com/ghadeerhamdan-cmd/slashtec.git"
+def gitUrl         = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
+def gitUrlCode     = "git@github.com:ghadeerhamdan-cmd/slashtec.git"
 def serviceName    = "slashtec-service"
 def EnvName        = "preprod"
 def registryId     = "727245885999"
