@@ -50,13 +50,7 @@ def notifyBuild(String buildStatus, String branchName) {
     color = 'RED'
     colorCode = '#FF0000'
   }
-
-  // Send notifications
-  emailext(
-    subject: subject,
-    body: details,
-    recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-  )
+  
 }
 
 node {
