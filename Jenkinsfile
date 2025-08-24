@@ -133,10 +133,6 @@ node {
         sh ("cd slashtec/${helmDir}; pathEnv=\".deployment.image.tag\" valueEnv=\"${imageTag}\" yq 'eval(strenv(pathEnv)) = strenv(valueEnv)' -i values.yaml ; cat values.yaml")
         sh ("cd slashtec/${helmDir}; git pull ; git add values.yaml; git commit -m 'update image tag' ;git push ${gitUrl}")
       }
-
-      stage ("Deploy airportcountries to ${EnvName} Environment") {
-        build job: 'airportcountries', wait: true
-      }
   
     } catch (Exception e) {
       currentBuild.result = 'FAILURE'
