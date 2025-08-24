@@ -134,11 +134,11 @@ node {
         sh ("cd slashtec/${helmDir}; git pull ; git add values.yaml; git commit -m 'update image tag' ;git push ${gitUrl}")
       }
 
-      stage ("Deploy preprod-solo-queue to ${EnvName} Environment") {
-        build job: 'preprod-solo-queue', wait: true
+      stage ("Deploy airportcountries to ${EnvName} Environment") {
+        build job: 'airportcountries', wait: true
       }
-      stage ("Deploy preprod-solo-crons to ${EnvName} Environment") {
-        build job: 'preprod-solo-crons', wait: true
+      stage ("Deploy airportcountries to ${EnvName} Environment") {
+        build job: 'airportcountries', wait: true
       }
     } catch (Exception e) {
       currentBuild.result = 'FAILURE'
