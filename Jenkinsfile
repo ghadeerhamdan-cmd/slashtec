@@ -8,7 +8,7 @@ def awsRegion      = "ap-south-1"
 def ecrUrl         = "727245885999.dkr.ecr.ap-south-1.amazonaws.com"
 def dockerfile     = "dockerfile/Dockerfile"
 def imageTag       = "${EnvName}-${BUILD_NUMBER}"
-def ARGOCD_URL     = "https://127.0.0.1:8080/applications/ghadeerecr"
+def ARGOCD_URL     = "https://127.0.0.1:8080/applications"
 
 // AppConfig Params
 def applicationName = "airport-countries"
