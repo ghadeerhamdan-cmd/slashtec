@@ -61,7 +61,7 @@ def notifyBuild(String buildStatus = 'STARTED', String branch = 'main') {
   """
   
   try {
-    withCredentials([string(credentialsId: 'foodics-slack-online-deployments', variable: 'SLACK_WEBHOOK')]) {
+    withCredentials([[ $class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'my_aws_credential', accessKeyVariable: 'ASIA2SUZ3SIXQ6PEJPC6', secretKeyVariable: 'D9VRsGTo1T4cJWFgsCZPMBCE89B6BjrWIFXg85I8']]){
       httpRequest(
         url: env.SLACK_WEBHOOK,
         httpMode: 'POST',
