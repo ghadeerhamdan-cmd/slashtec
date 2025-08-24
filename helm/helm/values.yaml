@@ -21,7 +21,6 @@ applications:
           livenessPath: "/health/live"
           readinessPath: "/health/ready"
           port: 8080
-        
       "v2":
         name: airports-app-v2
         image:
@@ -42,7 +41,6 @@ applications:
           livenessPath: "/health/live"
           readinessPath: "/health/ready"
           port: 8080
-
   countries:
     versions:
       "1.0.1":
@@ -65,11 +63,9 @@ applications:
           livenessPath: "/health/live"
           readinessPath: "/health/ready"
           port: 8080
-
 # Ingress configuration
 ingress:
   enabled: true
-
 # Global settings
 global:
   namespace: default
@@ -79,6 +75,11 @@ global:
     minReplicas: 1
     maxReplicas: 3
     targetCPUUtilizationPercentage: 80
-
 podAnnotations: {}
 podSecurityContext: {}
+values:
+  application:
+    airports:
+      versions:
+        image:
+          tag: preprod-62
