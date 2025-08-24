@@ -79,4 +79,4 @@ podAnnotations: {}
 podSecurityContext: {}
 deployment:
   image:
-    tag: preprod-29
+    tag: preprod-30
